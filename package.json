@@ -1,0 +1,9 @@
+{
+  "name": "",
+  "version": "0.0.0",
+  "description": "Simple implementation of blockchain in javascript.",
+  "license": "MIT",
+  "devDependencies": {
+    "js-sha256": "0.9.0"
+  }
+}
