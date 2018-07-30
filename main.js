@@ -7,6 +7,7 @@ class Block{
     this.transaction = transaction;
     this.timestamp = this.getTimestamp();
     this.hash = this.createHash();
+    this.nonce = 0
   }
 
   getTimestamp(){
@@ -15,13 +16,22 @@ class Block{
   }
 
   createHash(){
-    return SHA256(this.index + this.timestamp + JSON.stringify(this.transaction) + this.previousHash)
+    return SHA256(this.index + this.timestamp + JSON.stringify(this.transaction) + this.previousHash + this.nonce)
+  }
+
+  mineBlock(difficulty){
+    while(!this.hash.startsWith(Array(difficulty+1).join("0"))){
+      this.nonce += 1;
+      this.hash = this.createHash();
+    }
+    console.log("Block Mined : "+this.hash);
   }
 }
 
 class BlockChain{
-  constructor(){
-    this.chain = [this.createGenesisBlock()]
+  constructor(difficulty = 2){
+    this.chain = [this.createGenesisBlock()];
+    this.difficulty = difficulty;
   }
 
   createGenesisBlock(){
@@ -45,7 +55,7 @@ class BlockChain{
   addBlock(block){
     block.previousHash = this.getPreviousHash();
     block.index = this.getLength();
-    block.hash = block.createHash();
+    block.mineBlock(this.difficulty);
     this.chain.push(block);
   }
 
@@ -65,7 +75,8 @@ class BlockChain{
   }
 }
 
-let myCoin = new BlockChain;
+let myCoin = new BlockChain(4);
+console.log("Mining Block ...");
 myCoin.addBlock( new Block({ fromAccount: 'Tom', toAccount: 'Hank', amount: '20$' }) );
 myCoin.addBlock( new Block({ fromAccount: 'Lee', toAccount: 'Jason', amount: '100$' }) );
 console.log(JSON.stringify(myCoin, null, 4));
